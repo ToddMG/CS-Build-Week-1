@@ -17,6 +17,11 @@ class Board:
         # Add cell to buffer cells
         self._buffer_cells.add((x,y))
 
+    def curr_cell_spawn(self, x, y):
+        self._cells.add((x,y))
+
+    def curr_cell_kill(self, x, y):
+        self._cells.remove((x,y))
 
     def cell_kill(self, x, y):
         # Remove cell from buffer cells
@@ -73,12 +78,17 @@ class Board:
         yield x, y - 1
         yield x + 1, y - 1
 
-
     def configure_board(self, preset_cells):
-        for x,y in preset_cells:
-            self.cell_spawn(x,y)
-            print('Cell x and y')
-            print(x,y)
+        if preset_cells is None:
+            self._cells = set()
+            self._buffer_cells = set()
+        else:
+            for x,y in preset_cells:
+                if (x,y) in self._cells:
+                    self.curr_cell_kill(x,y)
+                else:
+                    self.curr_cell_spawn(x,y)
+                self.generate_buffer()
 
     # def draw_board(self):
     #     print('\n'*3)
@@ -89,12 +99,3 @@ class Board:
     #                 sys.stdout.write(' X ')
     #             else:
     #                 sys.stdout.write(' - ')
-
-# if __name__ == '__main__':
-#     test_board = Board()
-#     test_cells = {(0,2),(2,1),(2,2),(2,3),(1,3)}
-#     test_board.configure_board(test_cells)
-#     i = 0
-#     while i < 100:
-#         test_board.advance()
-#         i += 1
